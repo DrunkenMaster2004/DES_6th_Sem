@@ -560,7 +560,7 @@ def main():
     # Hero header with stunning design
     st.markdown("""
     <div class="hero-header">
-        <h1>🌾 AGRIBOT</h1>
+        <h1>🌾 AGRISENSE</h1>
         <p class="hero-subtitle">Next-Generation AI-Powered Agricultural Intelligence Platform</p>
         <div class="hero-icons">
             <span class="hero-icon">🌱</span>
