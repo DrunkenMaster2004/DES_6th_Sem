@@ -4,7 +4,8 @@ A comprehensive AI-powered multilingual agricultural advisor that provides perso
 
 > *⚠ Important*: Setup may take 10-15 minutes to load all dependencies and transformer models. Timing depends on your system configuration and internet speed.
 
-> *🔑 API Key Required*: Use this API Key - "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" or if this does not work get your free API key from [Groq Console](https://console.groq.com/keys) and add it to your environment or config file.
+> *🔑 API Key Required*: Use this API Key - "Groq API Key = [REDACTED]
+" or if this does not work get your free API key from [Groq Console](https://console.groq.com/keys) and add it to your environment or config file.
 
 ## Instant Setup
 
