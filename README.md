@@ -1,4 +1,4 @@
-# AgriBot
+# AgriSense
 
 A comprehensive AI-powered multilingual agricultural advisor that provides personalized farming advice, weather insights, market prices, and government policy information in Hindi and English.
 
@@ -17,8 +17,7 @@ venv\Scripts\activate  # Windows
 source venv/bin/activate  # Linux/Mac
 
 # Clone repository
-git clone https://github.com/ASTITVAXX/Team_AMA_CapitalOne_Submission.git
-cd agricultural-advisor-bot
+git clone https://github.com/DrunkenMaster2004/DES_6th_Sem
 
 # Run setup
 python setup_and_run.py

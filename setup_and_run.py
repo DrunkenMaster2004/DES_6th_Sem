@@ -336,9 +336,9 @@ def main():
                         help="Run end-to-end without any prompts (auto-selects interface)")
     args = parser.parse_args()
 
-    print_header("Agricultural Advisor Bot - Complete Setup")
-    print_info("This script will set up everything needed to run the agricultural advisor bot")
-    
+    print_header("AgriSense - Complete Setup")
+    print_info("This script will set up everything needed to run the AgriSense bot")
+
     # Check Python version
     if not check_python_version():
         sys.exit(1)
