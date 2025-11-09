@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Agricultural Advisor Bot - Complete Setup and Run Script
+AgriSense - Complete Setup and Run Script
 This script handles the complete setup process:
 1. Install all dependencies
 2. Create and initialize databases
@@ -30,31 +30,43 @@ class Colors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-def print_header(text):
-    """Print a formatted header"""
-    print(f"\n{Colors.HEADER}{Colors.BOLD}{'='*60}")
-    print(f"  {text}")
-    print(f"{'='*60}{Colors.ENDC}\n")
+def print_main_header():
+    """Print the main ASCII art header"""
+    print(f"\n{Colors.OKGREEN}{Colors.BOLD}")
+    print("=================================================================")
+    print('''   _____    __________________.___  _________                            
+  /  _  \  /  _____/\______   \   |/   _____/ ____   ____   ______ ____  
+ /  /_\  \/   \  ___ |       _/   |\_____  \_/ __ \ /    \ /  ___// __ \ 
+/    |    \    \_\  \|    |   \   |/        \  ___/|   |  \\___ \\  ___/ 
+\____|__  /\______  /|____|_  /___/_______  /\___  >___|  /____  >\___  >
+        \/        \/        \/            \/     \/     \/     \/     \/ ''')
+    print(f"{Colors.ENDC}{Colors.OKCYAN}{Colors.BOLD}{'AGRICULTURAL SENSOR & INTELLIGENCE BOT'.center(65)}{Colors.ENDC}")
+    print(f"{Colors.OKGREEN}{Colors.BOLD}================================================================={Colors.ENDC}\n")
+
+def print_section_header(text):
+    """Print a formatted section header"""
+    print(f"\n{Colors.HEADER}{Colors.BOLD}»» {text.upper()} ««{Colors.ENDC}")
+    print(f"{Colors.HEADER}{'-' * (len(text) + 6)}{Colors.ENDC}")
 
 def print_step(step_num, text):
     """Print a formatted step"""
-    print(f"{Colors.OKBLUE}[STEP {step_num}] {text}{Colors.ENDC}")
+    print(f"{Colors.OKBLUE}{Colors.BOLD}» [STEP {step_num}]{Colors.ENDC} {Colors.OKBLUE}{text}{Colors.ENDC}")
 
 def print_success(text):
-    """Print success message"""
-    print(f"{Colors.OKGREEN}✅ {text}{Colors.ENDC}")
+    """Print success message (indented)"""
+    print(f"  {Colors.OKGREEN}✅ {text}{Colors.ENDC}")
 
 def print_warning(text):
-    """Print warning message"""
-    print(f"{Colors.WARNING}⚠️  {text}{Colors.ENDC}")
+    """Print warning message (indented)"""
+    print(f"  {Colors.WARNING}⚠️  {text}{Colors.ENDC}")
 
 def print_error(text):
-    """Print error message"""
-    print(f"{Colors.FAIL}❌ {text}{Colors.ENDC}")
+    """Print error message (indented)"""
+    print(f"  {Colors.FAIL}❌ {text}{Colors.ENDC}")
 
 def print_info(text):
-    """Print info message"""
-    print(f"{Colors.OKCYAN}ℹ️  {text}{Colors.ENDC}")
+    """Print info message (indented)"""
+    print(f"  {Colors.OKCYAN}ℹ️  {text}{Colors.ENDC}")
 
 def check_python_version():
     """Check if Python version is compatible"""
@@ -100,7 +112,7 @@ def install_dependencies():
         return True
         
     except subprocess.CalledProcessError as e:
-        print_error(f"Failed to install dependencies: {e}")
+        print_error(f"Failed to install dependencies: {e.stderr}")
         print_info("You can try installing manually:")
         print_info("pip install -r requirements.txt")
         print_info("pip install -r requirements_streamlit.txt")
@@ -124,10 +136,11 @@ def create_directories():
 
 def ensure_env_file():
     """Create a .env template if missing (non-blocking)."""
+    print_step(4, "Checking for .env file...")
     try:
         env_path = Path(".env")
         if not env_path.exists():
-            print_step(3, "Creating .env template (optional)...")
+            print_info("Creating .env template (optional)...")
             content = (
                 "# Environment variables for Agricultural Advisor Bot\n"
                 "# Add your API keys if available. The app works without them, but with reduced features.\n"
@@ -145,7 +158,7 @@ def ensure_env_file():
 
 def initialize_database():
     """Initialize the agricultural database"""
-    print_step(4, "Initializing database...")
+    print_step(5, "Initializing database...")
     
     try:
         if os.path.exists("agri_data.db"):
@@ -169,7 +182,7 @@ def initialize_database():
 
 def process_policy_documents():
     """Process policy documents for the improved vector database"""
-    print_step(5, "Processing policy documents...")
+    print_step(6, "Processing policy documents...")
     
     try:
         if os.path.exists("improved_vector_db/metadata.json"):
@@ -218,9 +231,10 @@ def process_policy_documents():
 
 def verify_setup():
     """Verify that all components are properly set up"""
-    print_step(6, "Verifying setup...")
+    print_step(7, "Verifying setup...")
     
     checks = []
+    all_ok = True
     
     # Check database
     if os.path.exists("agri_data.db"):
@@ -233,11 +247,13 @@ def verify_setup():
             soil_count = cursor.fetchone()[0]
             conn.close()
             
-            checks.append(f"Database: {price_count:,} price records, {soil_count:,} soil records")
+            checks.append((f"Database: {price_count:,} price records, {soil_count:,} soil records", True))
         except Exception as e:
-            checks.append(f"Database error: {e}")
+            checks.append((f"Database error: {e}", False))
+            all_ok = False
     else:
-        checks.append("Database not found")
+        checks.append(("Database not found", False))
+        all_ok = False
     
     # Check policy database
     if os.path.exists("improved_vector_db/metadata.json"):
@@ -248,17 +264,21 @@ def verify_setup():
             num_sections = metadata.get('num_sections', metadata.get('total_sections', 0))
             num_documents = metadata.get('num_documents', None)
             if num_documents is not None:
-                checks.append(f"Policy DB: {num_sections} sections across {num_documents} documents")
+                checks.append((f"Policy DB: {num_sections} sections across {num_documents} documents", True))
             else:
-                checks.append(f"Policy DB: {num_sections} sections")
+                checks.append((f"Policy DB: {num_sections} sections", True))
         except Exception as e:
-            checks.append(f"Policy DB error: {e}")
+            checks.append((f"Policy DB error: {e}", False))
+            all_ok = False
     else:
-        checks.append("Policy database not found")
+        checks.append(("Policy database not found", False))
+        all_ok = False
     
     # Check PDFs
-    pdf_count = len([f for f in os.listdir("pdfs") if f.endswith(".pdf")])
-    checks.append(f"PDFs: {pdf_count} policy documents")
+    pdf_count = 0
+    if os.path.exists("pdfs"):
+        pdf_count = len([f for f in os.listdir("pdfs") if f.endswith(".pdf")])
+    checks.append((f"PDFs: {pdf_count} policy documents", True))
     
     # Check dependencies
     try:
@@ -267,29 +287,31 @@ def verify_setup():
         import spacy
         import streamlit
         import plotly
-        checks.append("Dependencies: All packages installed")
+        checks.append(("Dependencies: All packages installed", True))
     except ImportError as e:
-        checks.append(f"Dependencies: {e}")
+        checks.append((f"Dependencies: {e}", False))
+        all_ok = False
     
     # Print results
-    for check in checks:
-        if "error" in check.lower() or "not found" in check.lower():
-            print_warning(check)
-        else:
+    print_section_header("Setup Verification")
+    for check, success in checks:
+        if success:
             print_success(check)
+        else:
+            print_warning(check)
     
-    return all("error" not in check.lower() and "not found" not in check.lower() for check in checks)
+    return all_ok
 
 def get_user_choice():
     """Get user choice for interface"""
-    print_header("Choose Interface")
-    print("1. Command Line Interface (CLI)")
-    print("2. Web Interface (Streamlit)")
-    print("3. Exit")
+    print_section_header("Choose Interface")
+    print(f"  {Colors.BOLD}1.{Colors.ENDC} {Colors.OKGREEN}Command Line Interface (CLI){Colors.ENDC}")
+    print(f"  {Colors.BOLD}2.{Colors.ENDC} {Colors.OKCYAN}Web Interface (Streamlit){Colors.ENDC}")
+    print(f"  {Colors.BOLD}3.{Colors.ENDC} {Colors.WARNING}Exit{Colors.ENDC}")
     
     while True:
         try:
-            choice = input(f"\n{Colors.OKCYAN}Enter your choice (1-3): {Colors.ENDC}").strip()
+            choice = input(f"\n{Colors.OKBLUE}{Colors.BOLD}Enter your choice (1-3): {Colors.ENDC}").strip()
             if choice in ['1', '2', '3']:
                 return choice
             else:
@@ -300,7 +322,7 @@ def get_user_choice():
 
 def start_cli_bot():
     """Start the CLI bot"""
-    print_header("Starting CLI Bot")
+    print_section_header("Starting CLI Bot")
     print_info("Starting interactive agricultural advisor bot...")
     print_info("Press Ctrl+C to exit")
     print("-" * 50)
@@ -314,9 +336,9 @@ def start_cli_bot():
 
 def start_web_interface():
     """Start the Streamlit web interface"""
-    print_header("Starting Web Interface")
+    print_section_header("Starting Web Interface")
     print_info("Starting Streamlit web interface...")
-    print_info("The web interface will be available at: http://localhost:8501")
+    print_info(f"{Colors.BOLD}The web interface will be available at: {Colors.UNDERLINE}http://localhost:8501{Colors.ENDC}")
     print_info("Press Ctrl+C to stop the server")
     print("-" * 50)
     
@@ -329,63 +351,66 @@ def start_web_interface():
 
 def main():
     """Main function"""
-    parser = argparse.ArgumentParser(description="Agricultural Advisor Bot - Complete Setup and Runner")
-    parser.add_argument("--interface", choices=["cli", "web", "none"], default="web",
-                        help="What to start after setup (default: web)")
+    parser = argparse.ArgumentParser(description="AgriSense - Complete Setup and Runner")
+    parser.add_argument("--interface", choices=["cli", "web", "none"], default=None,
+                        help="What to start after setup (default: prompt user)")
     parser.add_argument("--non-interactive", action="store_true",
-                        help="Run end-to-end without any prompts (auto-selects interface)")
+                        help="Run end-to-end without any prompts (will default to 'web' interface)")
     args = parser.parse_args()
 
-    print_header("AgriSense - Complete Setup")
+    print_main_header()
     print_info("This script will set up everything needed to run the AgriSense bot")
 
-    # Check Python version
+    # --- SETUP STEPS ---
     if not check_python_version():
         sys.exit(1)
     
-    # Create .env template if missing (optional)
-    ensure_env_file()
-    
-    # Install dependencies
     if not install_dependencies():
         print_error("Failed to install dependencies. Please check the error messages above.")
         sys.exit(1)
     
-    # Create directories
     if not create_directories():
         print_error("Failed to create directories.")
         sys.exit(1)
+
+    ensure_env_file() # Non-critical
     
-    # Initialize database
     if not initialize_database():
         print_error("Failed to initialize database.")
         sys.exit(1)
     
-    # Process policy documents
     if not process_policy_documents():
         print_error("Failed to process policy documents.")
         sys.exit(1)
     
-    # Verify setup
+    # --- VERIFICATION ---
     if not verify_setup():
         print_warning("Some components may not be properly set up.")
         print_info("You can continue, but some features may not work correctly.")
     
-    print_header("Setup Complete!")
-    print_success("All components have been set up successfully!")
+    print_section_header("Setup Complete!")
+    print_success(f"{Colors.BOLD}All components have been set up successfully!{Colors.ENDC}")
     
-    # Non-interactive or explicit interface selection
-    if args.non_interactive or args.interface in ("cli", "web", "none"):
+    # --- LAUNCH ---
+    
+    # Handle --interface argument
+    if args.interface:
         if args.interface == "cli":
             start_cli_bot()
         elif args.interface == "web":
             start_web_interface()
-        else:
+        else: # --interface none
             print_info("Setup finished. Not launching any interface (--interface none)")
             sys.exit(0)
         return
+
+    # Handle --non-interactive (defaults to web)
+    if args.non_interactive:
+        print_info("Non-interactive mode selected, launching web interface...")
+        start_web_interface()
+        return
     
-    # Interactive choice (fallback)
+    # Interactive choice (default)
     choice = get_user_choice()
     if choice == '1':
         start_cli_bot()
