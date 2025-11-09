@@ -1,303 +1,3 @@
-# import streamlit as st
-# from datetime import datetime
-# import sys
-# from pathlib import Path
-
-# # Load your backend modules
-# sys.path.append(str(Path(__file__).parent))
-# try:
-#     from agricultural_advisor_bot import AgriculturalAdvisorBot
-# except ImportError:
-#     st.error("⚠️ Missing dependency: agricultural_advisor_bot.py")
-
-# # --------------------------------------------------------
-# # 🌱 PAGE CONFIG
-# # --------------------------------------------------------
-# st.set_page_config(
-#     page_title="AgriSense – Smart Farming Companion",
-#     page_icon="🌾",
-#     layout="wide"
-# )
-
-# # --------------------------------------------------------
-# # 🎨 CUSTOM STYLING — EARTHY, CALM, ORGANIC AESTHETIC
-# # --------------------------------------------------------
-# st.markdown("""
-# <style>
-# /* ---------------- GLOBAL THEME ---------------- */
-# @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-# .stApp {
-#     background: radial-gradient(circle at 20% 30%, #f0fdf4 0%, #fefce8 40%, #fef9c3 100%);
-#     font-family: 'Inter', sans-serif;
-#     color: #1e293b;
-# }
-
-# /* ---------------- CONTAINERS ---------------- */
-# .main-container {
-#     max-width: 1100px;
-#     margin: 2rem auto;
-#     padding: 2rem 3rem;
-#     border-radius: 30px;
-#     background: rgba(255,255,255,0.55);
-#     box-shadow: 0 20px 60px rgba(16, 185, 129, 0.15);
-#     backdrop-filter: blur(20px);
-#     -webkit-backdrop-filter: blur(20px);
-#     transition: all 0.4s ease;
-# }
-
-# .main-container:hover {
-#     box-shadow: 0 25px 70px rgba(22,163,74,0.25);
-# }
-
-# /* ---------------- HEADER ---------------- */
-# .header {
-#     text-align: center;
-#     margin-bottom: 2.5rem;
-# }
-
-# .header h1 {
-#     font-size: 3rem;
-#     font-weight: 700;
-#     color: #166534;
-#     letter-spacing: -0.5px;
-#     margin-bottom: 0.3rem;
-# }
-
-# .header p {
-#     font-size: 1.1rem;
-#     color: #475569;
-#     margin-top: 0;
-# }
-
-# /* ---------------- FEATURE GRID ---------------- */
-# .feature-grid {
-#     display: grid;
-#     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-#     gap: 1rem;
-#     margin: 2rem 0;
-# }
-
-# .feature-card {
-#     background: rgba(255,255,255,0.85);
-#     border: 1px solid #dcfce7;
-#     border-radius: 20px;
-#     padding: 1.2rem;
-#     text-align: center;
-#     transition: all 0.25s ease-in-out;
-#     box-shadow: 0 6px 15px rgba(0,0,0,0.05);
-# }
-
-# .feature-card:hover {
-#     transform: translateY(-6px);
-#     background: #ecfccb;
-#     box-shadow: 0 12px 20px rgba(0,0,0,0.08);
-# }
-
-# /* ---------------- CHAT SECTION ---------------- */
-# .chat-box {
-#     background: rgba(255,255,255,0.7);
-#     border-radius: 25px;
-#     padding: 1.5rem 2rem;
-#     box-shadow: 0 5px 25px rgba(0,0,0,0.1);
-#     margin-top: 2rem;
-# }
-
-# .message {
-#     padding: 1rem 1.5rem;
-#     margin: 1rem 0;
-#     border-radius: 18px;
-#     line-height: 1.6;
-#     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-#     max-width: 80%;
-# }
-
-# .user-message {
-#     background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-#     margin-left: auto;
-#     border-left: 5px solid #16a34a;
-# }
-
-# .bot-message {
-#     background: linear-gradient(135deg, #fef9c3, #fef08a);
-#     border-left: 5px solid #ca8a04;
-# }
-
-# /* ---------------- INPUT AREA ---------------- */
-# textarea {
-#     border-radius: 15px !important;
-#     border: 1.5px solid #d1fae5 !important;
-#     background: rgba(255, 255, 255, 0.7) !important;
-#     color: #1e293b !important;
-#     font-size: 1rem !important;
-# }
-
-# /* ---------------- BUTTONS ---------------- */
-# .stButton > button {
-#     background: linear-gradient(135deg, #16a34a 0%, #65a30d 100%);
-#     color: #fff;
-#     border: none;
-#     border-radius: 40px;
-#     padding: 0.6rem 2rem;
-#     font-weight: 600;
-#     font-size: 1rem;
-#     transition: 0.2s ease-in-out;
-# }
-
-# .stButton > button:hover {
-#     background: linear-gradient(135deg, #15803d, #4d7c0f);
-#     transform: translateY(-2px);
-#     box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-# }
-
-# /* ---------------- STATUS BADGE ---------------- */
-# .status {
-#     padding: 0.4rem 0.9rem;
-#     border-radius: 15px;
-#     font-weight: 600;
-#     font-size: 0.9rem;
-# }
-
-# .online { background: #dcfce7; color: #166534; }
-# .offline { background: #fee2e2; color: #991b1b; }
-
-# /* ---------------- FOOTER ---------------- */
-# .footer {
-#     text-align: center;
-#     margin-top: 2.5rem;
-#     padding: 1rem;
-#     color: #475569;
-#     font-size: 0.9rem;
-# }
-# </style>
-# """, unsafe_allow_html=True)
-
-# # --------------------------------------------------------
-# # 🧠 STATE MANAGEMENT
-# # --------------------------------------------------------
-# if "bot" not in st.session_state:
-#     st.session_state.bot = None
-# if "chat_history" not in st.session_state:
-#     st.session_state.chat_history = []
-
-# # --------------------------------------------------------
-# # ⚙️ BOT SETUP
-# # --------------------------------------------------------
-# def initialize_bot():
-#     try:
-#         bot = AgriculturalAdvisorBot()
-#         bot.user_city = "Kanpur"
-#         bot.user_crop = "Wheat"
-#         bot.user_language = "English"
-#         bot.is_initialized = True
-#         st.session_state.bot = bot
-#         return True
-#     except Exception as e:
-#         st.error(f"Bot initialization failed: {e}")
-#         return False
-
-# def process_query(query):
-#     try:
-#         if not st.session_state.bot:
-#             return "⚠️ Please start the bot first."
-#         return st.session_state.bot.process_query(query)
-#     except Exception as e:
-#         return f"⚠️ Error: {str(e)}"
-
-# # --------------------------------------------------------
-# # 🌿 MAIN APP
-# # --------------------------------------------------------
-# def main():
-#     st.markdown('<div class="main-container">', unsafe_allow_html=True)
-
-#     # HEADER
-#     st.markdown("""
-#     <div class="header">
-#         <h1>🌿 AgriSense</h1>
-#         <p>Smarter, Greener, and Kinder Agriculture — powered by AI.</p>
-#     </div>
-#     """, unsafe_allow_html=True)
-
-#     # FEATURES
-#     st.markdown("""
-#     <div class="feature-grid">
-#         <div class="feature-card">💰 <b>Market Rates</b><br>Real-time mandi & wholesale price tracking.</div>
-#         <div class="feature-card">🌤️ <b>Weather Forecast</b><br>Local, crop-specific guidance.</div>
-#         <div class="feature-card">📜 <b>Policy Updates</b><br>Latest agricultural schemes explained.</div>
-#         <div class="feature-card">🌾 <b>Farming Insights</b><br>Tips for soil health and better yields.</div>
-#     </div>
-#     """, unsafe_allow_html=True)
-
-#     # CHAT SECTION
-#     st.markdown('<div class="chat-box">', unsafe_allow_html=True)
-#     col1, col2 = st.columns([3, 1])
-
-#     with col1:
-#         st.subheader("💬 Chat with AgriSense")
-#     with col2:
-#         if st.session_state.bot:
-#             st.markdown('<span class="status online">🟢 Online</span>', unsafe_allow_html=True)
-#         else:
-#             st.markdown('<span class="status offline">🔴 Offline</span>', unsafe_allow_html=True)
-#             if st.button("Start Bot 🌾"):
-#                 if initialize_bot():
-#                     st.success("AgriSense is ready to help you 🌱")
-#                     st.rerun()
-
-#     query = st.text_area(
-#         "Ask about your crop, weather, or farming query:",
-#         placeholder="Example: 🌾 What is the best fertilizer for rice in humid weather?",
-#         height=120
-#     )
-
-#     colA, colB, colC = st.columns(3)
-#     with colA:
-#         if st.button("🚀 Send Query"):
-#             if not st.session_state.bot:
-#                 st.error("Start the bot first!")
-#             elif query.strip():
-#                 st.session_state.chat_history.append(
-#                     {"role": "user", "content": query, "time": datetime.now().strftime("%H:%M")}
-#                 )
-#                 with st.spinner("🤖 Thinking..."):
-#                     response = process_query(query)
-#                 st.session_state.chat_history.append(
-#                     {"role": "bot", "content": response, "time": datetime.now().strftime("%H:%M")}
-#                 )
-#                 st.rerun()
-#     with colB:
-#         if st.button("🧹 Clear Chat"):
-#             st.session_state.chat_history = []
-#             st.rerun()
-#     with colC:
-#         if st.button("💡 Suggestions"):
-#             st.info("Try:\n- Weather forecast for wheat in Lucknow\n- गेहूं का भाव क्या है?\n- PM Fasal Bima Yojana details\n- Best time to sow paddy")
-
-#     # DISPLAY CHAT
-#     if st.session_state.chat_history:
-#         for msg in st.session_state.chat_history:
-#             if msg["role"] == "user":
-#                 st.markdown(f"<div class='message user-message'><b>You:</b><br>{msg['content']}</div>", unsafe_allow_html=True)
-#             else:
-#                 st.markdown(f"<div class='message bot-message'><b>AgriSense:</b><br>{msg['content']}</div>", unsafe_allow_html=True)
-#     else:
-#         st.info("Start chatting to get personalized farming insights 🌾")
-
-#     st.markdown("</div>", unsafe_allow_html=True)
-
-#     # FOOTER
-#     st.markdown("""
-#     <div class="footer">
-#         🌱 <b>AgriSense</b> | Empowering Sustainable Farming with AI · Bilingual (EN + HI) · Weather · Market · Policy
-#     </div>
-#     """, unsafe_allow_html=True)
-
-#     st.markdown("</div>", unsafe_allow_html=True)
-
-# if __name__ == "__main__":
-#     main()
-
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -321,99 +21,170 @@ except ImportError as e:
 
 # Page configuration
 st.set_page_config(
-    page_title="AGRIBOT - Smart Farming Assistant",
+    page_title="AGRISENSE - AI Farming Revolution",
     page_icon="🌾",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# Modern CSS styling with beautiful aesthetics
+# Ultra-modern CSS with stunning visuals
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
     
     * {
-        font-family: 'Poppins', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     
+    /* Animated gradient background */
     .stApp {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        background-attachment: fixed;
+        background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1a472a, #2d5016);
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
     }
     
-    .main-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 2rem;
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
     
-    /* Glassmorphism Header */
-    .header-section {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-radius: 30px;
-        padding: 3rem 2rem;
+    /* Floating particles effect */
+    .stApp::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            radial-gradient(circle, rgba(76, 175, 80, 0.1) 1px, transparent 1px),
+            radial-gradient(circle, rgba(139, 195, 74, 0.1) 1px, transparent 1px);
+        background-size: 50px 50px, 80px 80px;
+        background-position: 0 0, 40px 40px;
+        animation: particleFloat 20s linear infinite;
+        pointer-events: none;
+        z-index: 0;
+    }
+    
+    @keyframes particleFloat {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-50px); }
+    }
+    
+    /* Ensure content is visible */
+    .block-container {
+        position: relative;
+        z-index: 1;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    
+    /* Hero Header with 3D effect */
+    .hero-header {
+        background: linear-gradient(135deg, rgba(20, 30, 48, 0.95) 0%, rgba(36, 59, 85, 0.95) 100%);
+        backdrop-filter: blur(30px);
+        border-radius: 40px;
+        padding: 4rem 3rem;
         text-align: center;
-        margin-bottom: 2rem;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-        border: 1px solid rgba(255, 255, 255, 0.18);
+        margin-bottom: 3rem;
+        box-shadow: 
+            0 20px 60px rgba(0, 0, 0, 0.5),
+            0 0 100px rgba(76, 175, 80, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         position: relative;
         overflow: hidden;
     }
     
-    .header-section::before {
+    .hero-header::before {
         content: '';
         position: absolute;
         top: -50%;
         left: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
-        animation: pulse 4s ease-in-out infinite;
+        background: radial-gradient(circle, rgba(76, 175, 80, 0.15) 0%, transparent 60%);
+        animation: heroGlow 6s ease-in-out infinite;
     }
     
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 0.5; }
-        50% { transform: scale(1.1); opacity: 0.8; }
+    @keyframes heroGlow {
+        0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+        50% { transform: translate(10%, 10%) scale(1.1); opacity: 0.8; }
     }
     
-    .header-section h1 {
-        font-size: 3.5rem;
-        font-weight: 700;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    .hero-header h1 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 50%, #4ade80 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 0.5rem;
+        background-clip: text;
+        margin-bottom: 1rem;
         position: relative;
         z-index: 1;
+        letter-spacing: -2px;
+        animation: titleFloat 3s ease-in-out infinite;
     }
     
-    .header-section p {
-        font-size: 1.3rem;
-        color: #555;
+    @keyframes titleFloat {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    .hero-subtitle {
+        font-size: 1.5rem;
+        color: rgba(255, 255, 255, 0.9);
         font-weight: 400;
         position: relative;
         z-index: 1;
+        letter-spacing: 1px;
     }
     
-    /* Feature Cards with Hover Effects */
+    .hero-icons {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        margin-top: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .hero-icon {
+        font-size: 3rem;
+        animation: iconBounce 2s ease-in-out infinite;
+    }
+    
+    .hero-icon:nth-child(1) { animation-delay: 0s; }
+    .hero-icon:nth-child(2) { animation-delay: 0.3s; }
+    .hero-icon:nth-child(3) { animation-delay: 0.6s; }
+    .hero-icon:nth-child(4) { animation-delay: 0.9s; }
+    
+    @keyframes iconBounce {
+        0%, 100% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-15px) scale(1.1); }
+    }
+    
+    /* Feature Cards with stunning hover effects */
     .feature-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
-        margin: 2rem 0;
+        gap: 2rem;
+        margin: 3rem 0;
     }
     
     .feature-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        padding: 2rem;
-        border-radius: 20px;
+        background: linear-gradient(135deg, rgba(30, 40, 60, 0.9) 0%, rgba(40, 55, 75, 0.9) 100%);
+        backdrop-filter: blur(20px);
+        padding: 3rem 2rem;
+        border-radius: 30px;
         text-align: center;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 
+            0 10px 40px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
         cursor: pointer;
         position: relative;
         overflow: hidden;
@@ -422,65 +193,95 @@ st.markdown("""
     .feature-card::before {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(76, 175, 80, 0.2) 0%, transparent 70%);
         opacity: 0;
-        transition: opacity 0.3s ease;
+        transition: opacity 0.5s ease;
     }
     
     .feature-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 45px 0 rgba(102, 126, 234, 0.4);
+        transform: translateY(-20px);
+        box-shadow: 
+            0 30px 80px rgba(76, 175, 80, 0.4),
+            0 0 60px rgba(76, 175, 80, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        border-color: rgba(76, 175, 80, 0.5);
     }
     
     .feature-card:hover::before {
         opacity: 1;
     }
     
+    .feature-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        filter: drop-shadow(0 0 20px rgba(76, 175, 80, 0.6));
+        transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover .feature-icon {
+        transform: scale(1.2);
+        filter: drop-shadow(0 0 30px rgba(76, 175, 80, 1));
+    }
+    
     .feature-card h4 {
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-        color: #667eea;
-        position: relative;
-        z-index: 1;
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 700;
     }
     
     .feature-card p {
-        color: #666;
-        font-size: 1rem;
-        position: relative;
-        z-index: 1;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1.05rem;
+        line-height: 1.6;
     }
     
-    /* Chat Container */
+    /* Ultra-modern chat container */
     .chat-container {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        border-radius: 30px;
-        padding: 2.5rem;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        margin-bottom: 2rem;
+        background: linear-gradient(135deg, rgba(20, 30, 48, 0.95) 0%, rgba(36, 59, 85, 0.95) 100%);
+        backdrop-filter: blur(30px);
+        border-radius: 40px;
+        padding: 3rem;
+        box-shadow: 
+            0 20px 60px rgba(0, 0, 0, 0.5),
+            0 0 100px rgba(76, 175, 80, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 3rem;
         min-height: 600px;
     }
     
-    /* Messages with Modern Design */
-    .message {
-        padding: 1.2rem 1.5rem;
-        margin: 1rem 0;
-        border-radius: 20px;
-        max-width: 75%;
-        animation: slideIn 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    .chat-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
     
-    @keyframes slideIn {
+    /* Futuristic messages */
+    .message {
+        padding: 1.5rem 2rem;
+        margin: 1.5rem 0;
+        border-radius: 25px;
+        max-width: 70%;
+        animation: messageSlide 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        position: relative;
+    }
+    
+    @keyframes messageSlide {
         from {
             opacity: 0;
-            transform: translateY(10px);
+            transform: translateY(30px);
         }
         to {
             opacity: 1;
@@ -492,162 +293,214 @@ st.markdown("""
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         margin-left: auto;
-        border-bottom-right-radius: 5px;
+        border-bottom-right-radius: 8px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
     
     .bot-message {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         color: white;
-        border-bottom-left-radius: 5px;
+        border-bottom-left-radius: 8px;
+        box-shadow: 0 10px 30px rgba(56, 239, 125, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
     
     .message strong {
         display: block;
-        margin-bottom: 0.5rem;
-        font-size: 0.9rem;
-        opacity: 0.9;
-    }
-    
-    /* Input Area */
-    .input-area {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        padding: 2rem;
-        border-radius: 20px;
-        border: 2px solid rgba(102, 126, 234, 0.2);
-        margin-bottom: 2rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-    
-    /* Buttons */
-    .stButton > button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 50px;
-        padding: 0.8rem 2.5rem;
+        margin-bottom: 0.8rem;
+        font-size: 0.95rem;
+        opacity: 0.95;
         font-weight: 600;
-        font-size: 1rem;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Futuristic input area */
+    .input-area {
+        background: linear-gradient(135deg, rgba(30, 40, 60, 0.8) 0%, rgba(40, 55, 75, 0.8) 100%);
+        backdrop-filter: blur(20px);
+        padding: 2.5rem;
+        border-radius: 30px;
+        border: 2px solid rgba(76, 175, 80, 0.3);
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        width: 100%;
+    }
+    
+    .input-area:hover {
+        border-color: rgba(76, 175, 80, 0.6);
+        box-shadow: 0 15px 50px rgba(76, 175, 80, 0.3);
+    }
+    
+    /* Premium buttons */
+    .stButton > button {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 50px !important;
+        padding: 1rem 3rem !important;
+        font-weight: 700 !important;
+        font-size: 1.05rem !important;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1) !important;
+        box-shadow: 0 10px 30px rgba(56, 239, 125, 0.4) !important;
+        width: 100% !important;
+        letter-spacing: 1px !important;
+        text-transform: uppercase !important;
     }
     
     .stButton > button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        transform: translateY(-5px) scale(1.02) !important;
+        box-shadow: 0 20px 50px rgba(56, 239, 125, 0.6) !important;
     }
     
-    .stButton > button:active {
-        transform: translateY(-1px);
-    }
-    
-    /* Status Badge */
+    /* Glowing status badge */
     .status-badge {
         display: inline-block;
-        padding: 0.5rem 1.5rem;
+        padding: 0.8rem 2rem;
         border-radius: 50px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        animation: pulse 2s infinite;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
     }
     
     .status-online {
         background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         color: white;
-        box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4);
+        box-shadow: 0 10px 30px rgba(56, 239, 125, 0.5);
+        animation: statusPulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes statusPulse {
+        0%, 100% { 
+            box-shadow: 0 10px 30px rgba(56, 239, 125, 0.5);
+        }
+        50% { 
+            box-shadow: 0 15px 40px rgba(56, 239, 125, 0.7);
+        }
     }
     
     .status-offline {
         background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
         color: white;
-        box-shadow: 0 4px 15px rgba(235, 51, 73, 0.4);
+        box-shadow: 0 10px 30px rgba(235, 51, 73, 0.5);
     }
     
-    /* Text Area */
+    /* Premium text area */
     .stTextArea textarea {
-        border-radius: 15px;
-        border: 2px solid rgba(102, 126, 234, 0.3);
-        padding: 1rem;
-        font-size: 1rem;
-        transition: all 0.3s ease;
+        background: rgba(20, 30, 48, 0.6) !important;
+        border-radius: 20px !important;
+        border: 2px solid rgba(76, 175, 80, 0.3) !important;
+        padding: 1.5rem !important;
+        font-size: 1.1rem !important;
+        color: white !important;
+        transition: all 0.3s ease !important;
     }
     
     .stTextArea textarea:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: rgba(76, 175, 80, 0.8) !important;
+        box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2) !important;
+        background: rgba(20, 30, 48, 0.8) !important;
     }
     
-    /* Info Section */
+    .stTextArea textarea::placeholder {
+        color: rgba(255, 255, 255, 0.5) !important;
+    }
+    
+    .stTextArea label {
+        color: white !important;
+    }
+    
+    /* Info section */
     .info-section {
-        background: rgba(255, 255, 255, 0.95);
+        background: linear-gradient(135deg, rgba(30, 40, 60, 0.9) 0%, rgba(40, 55, 75, 0.9) 100%);
         backdrop-filter: blur(20px);
-        border-radius: 25px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 30px;
+        padding: 2.5rem;
+        margin-bottom: 3rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     .info-section h3 {
-        color: #667eea;
-        font-size: 1.8rem;
+        font-family: 'Space Grotesk', sans-serif;
+        background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 2rem;
         margin-bottom: 1rem;
-        font-weight: 600;
+        font-weight: 700;
     }
     
     .info-section p {
-        color: #555;
-        font-size: 1.05rem;
-        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 1.1rem;
+        line-height: 1.8;
     }
     
-    /* Footer */
+    /* Stunning footer */
     .footer {
         text-align: center;
-        margin-top: 3rem;
-        padding: 2rem;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        border-radius: 25px;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+        margin-top: 4rem;
+        padding: 3rem;
+        background: linear-gradient(135deg, rgba(20, 30, 48, 0.95) 0%, rgba(36, 59, 85, 0.95) 100%);
+        backdrop-filter: blur(30px);
+        border-radius: 40px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     .footer strong {
-        font-size: 1.2rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.8rem;
+        background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 700;
     }
     
     .footer p {
-        color: #666;
-        margin-top: 0.5rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-top: 1rem;
+        font-size: 1.05rem;
     }
     
-    /* Scrollbar */
+    /* Custom scrollbar */
     ::-webkit-scrollbar {
-        width: 10px;
+        width: 12px;
     }
     
     ::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(20, 30, 48, 0.5);
         border-radius: 10px;
     }
     
     ::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         border-radius: 10px;
+        border: 2px solid rgba(20, 30, 48, 0.5);
     }
     
     ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
     }
     
-    /* Hide Streamlit Branding */
+    /* Hide Streamlit elements */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .hero-header h1 {
+            font-size: 3rem;
+        }
+        .feature-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -704,89 +557,99 @@ def process_query_with_fallback(query: str) -> str:
         return f"❌ Error processing query: {str(e)}"
 
 def main():
-    # Header section
+    # Hero header with stunning design
     st.markdown("""
-    <div class="header-section">
+    <div class="hero-header">
         <h1>🌾 AGRIBOT</h1>
-        <p>Your Smart Farming Partner for Quicker, Sharper, and Greener Decisions</p>
+        <p class="hero-subtitle">Next-Generation AI-Powered Agricultural Intelligence Platform</p>
+        <div class="hero-icons">
+            <span class="hero-icon">🌱</span>
+            <span class="hero-icon">🤖</span>
+            <span class="hero-icon">📊</span>
+            <span class="hero-icon">🌍</span>
+        </div>
     </div>
     """, unsafe_allow_html=True)
     
-    # Info section with feature cards
+    # Info section
     st.markdown("""
     <div class="info-section">
-        <h3>🤖 Intelligent Agricultural Assistant</h3>
-        <p>Empowering farmers with AI-driven insights for sustainable and profitable farming</p>
+        <h3>🚀 Revolutionary Farming Intelligence</h3>
+        <p>Harness the power of artificial intelligence to transform your agricultural operations. Get real-time insights, market intelligence, and expert recommendations at your fingertips.</p>
     </div>
     """, unsafe_allow_html=True)
     
-    # Feature cards
+    # Feature cards with stunning visuals
     st.markdown("""
     <div class="feature-grid">
         <div class="feature-card">
-            <h4>💰 Live Mandi Prices</h4>
-            <p>Real-time crop prices from mandis across India</p>
+            <div class="feature-icon">💰</div>
+            <h4>Live Market Intelligence</h4>
+            <p>Real-time mandi prices and market trends from across India with predictive analytics</p>
         </div>
         <div class="feature-card">
-            <h4>🌤️ Weather Intelligence</h4>
-            <p>Smart farming advice based on weather forecasts</p>
+            <div class="feature-icon">🌤️</div>
+            <h4>Climate-Smart Advisory</h4>
+            <p>AI-powered weather forecasts and precision farming recommendations</p>
         </div>
         <div class="feature-card">
-            <h4>📋 Policy Navigator</h4>
-            <p>Complete guide to government schemes & subsidies</p>
+            <div class="feature-icon">📋</div>
+            <h4>Policy Intelligence Hub</h4>
+            <p>Comprehensive guide to government schemes, subsidies, and financial assistance</p>
         </div>
         <div class="feature-card">
-            <h4>🌾 Expert Tips</h4>
-            <p>Best practices & modern farming techniques</p>
+            <div class="feature-icon">🎯</div>
+            <h4>Expert Insights</h4>
+            <p>Data-driven farming techniques and best practices for maximum yield</p>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
     st.markdown("""
     <div class="info-section">
-        <p>💡 <strong>Multilingual Support:</strong> Ask questions in English or Hindi - the bot understands both! Simply mention your city or crop in your question.</p>
+        <p>💡 <strong>Intelligent Multilingual Support:</strong> Communicate naturally in English or Hindi. Our AI understands context and automatically adapts to your language preference.</p>
     </div>
     """, unsafe_allow_html=True)
     
     # Chat container
     st.markdown('<div class="chat-container">', unsafe_allow_html=True)
     
-    # Bot status
-    col1, col2 = st.columns([4, 1])
+    # Chat header
+    col1, col2 = st.columns([3, 1])
     
     with col1:
-        st.markdown("### 💬 Chat with Your Agricultural Advisor")
+        st.markdown('<div class="chat-title">💬 AI Assistant</div>', unsafe_allow_html=True)
     
     with col2:
         if st.session_state.bot:
-            st.markdown('<span class="status-badge status-online">🟢 Online</span>', unsafe_allow_html=True)
+            st.markdown('<span class="status-badge status-online">● Live</span>', unsafe_allow_html=True)
         else:
-            st.markdown('<span class="status-badge status-offline">🔴 Offline</span>', unsafe_allow_html=True)
+            st.markdown('<span class="status-badge status-offline">○ Offline</span>', unsafe_allow_html=True)
     
     if not st.session_state.bot:
-        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("<br><br>", unsafe_allow_html=True)
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            if st.button("🚀 Start AGRIBOT", type="primary"):
+            if st.button("⚡ ACTIVATE AGRIBOT", type="primary"):
                 if initialize_bot():
-                    st.success("✅ Bot started successfully!")
+                    st.success("✅ AI System Online!")
                     st.rerun()
     
-    # Chat input area
+    # Chat interface
     if st.session_state.bot:
         st.markdown('<div class="input-area">', unsafe_allow_html=True)
         
         user_input = st.text_area(
-            "Type your question here:",
-            placeholder="💬 Examples:\n• गेहूं का भाव क्या है?\n• What is the weather like in Mumbai?\n• PM Kisan scheme details\n• Rice prices in Kanpur\n• मौसम कैसा है?\n• Wheat prices in Delhi",
-            height=120,
+            "Your Message",
+            placeholder="🎤 Ask anything...\n\n• गेहूं की कीमत क्या है?\n• Weather forecast for Mumbai\n• PM Kisan scheme benefits\n• Best irrigation practices\n• Rice market trends",
+            height=140,
             key="user_input"
         )
         
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            if st.button("📤 Send Message", type="primary"):
+            if st.button("🚀 SEND", type="primary"):
                 if user_input.strip():
                     st.session_state.chat_history.append({
                         "role": "user",
@@ -794,7 +657,7 @@ def main():
                         "timestamp": datetime.now().strftime("%H:%M")
                     })
                     
-                    with st.spinner("🤖 Thinking..."):
+                    with st.spinner("🧠 AI Processing..."):
                         try:
                             response = process_query_with_fallback(user_input)
                             st.session_state.chat_history.append({
@@ -803,7 +666,7 @@ def main():
                                 "timestamp": datetime.now().strftime("%H:%M")
                             })
                         except Exception as e:
-                            error_msg = f"Sorry, I encountered an error: {str(e)}"
+                            error_msg = f"⚠️ System Error: {str(e)}"
                             st.session_state.chat_history.append({
                                 "role": "bot",
                                 "content": error_msg,
@@ -813,25 +676,25 @@ def main():
                     st.rerun()
         
         with col2:
-            if st.button("🗑️ Clear Chat"):
+            if st.button("🗑️ CLEAR", type="primary"):
                 st.session_state.chat_history = []
                 st.rerun()
         
         with col3:
-            if st.button("💡 Examples"):
+            if st.button("💡 EXAMPLES", type="primary"):
                 st.info("""
-                **Try asking:**
+                **Try these queries:**
                 - गेहूं का भाव क्या है?
                 - Weather forecast Mumbai
-                - PM Kisan scheme details
-                - Rice prices Kanpur
-                - मौसम कैसा है?
-                - Best planting season
+                - PM Kisan eligibility
+                - Rice market analysis
+                - Crop rotation tips
+                - मौसम की जानकारी
                 """)
         
         st.markdown('</div>', unsafe_allow_html=True)
     
-    # Chat history with modern message bubbles
+    # Chat history
     if st.session_state.chat_history:
         st.markdown("<br>", unsafe_allow_html=True)
         
@@ -839,29 +702,40 @@ def main():
             if message["role"] == "user":
                 st.markdown(f"""
                 <div class="message user-message">
-                    <strong>You • {message['timestamp']}</strong>
+                    <strong>YOU • {message['timestamp']}</strong>
                     <div>{message['content']}</div>
                 </div>
                 """, unsafe_allow_html=True)
             else:
                 st.markdown(f"""
                 <div class="message bot-message">
-                    <strong>AGRIBOT • {message['timestamp']}</strong>
+                    <strong>AGRIBOT AI • {message['timestamp']}</strong>
                     <div>{message['content']}</div>
                 </div>
                 """, unsafe_allow_html=True)
     else:
         if st.session_state.bot:
-            st.info("💬 Start a conversation by typing your question above!")
+            st.markdown("""
+            <div style="text-align: center; padding: 3rem; color: rgba(255,255,255,0.6);">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">🤖</div>
+                <div style="font-size: 1.3rem; font-weight: 500;">AI Ready to Assist</div>
+                <div style="font-size: 1rem; margin-top: 0.5rem;">Type your agricultural query above to get started</div>
+            </div>
+            """, unsafe_allow_html=True)
     
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # Footer
+    # Premium footer
     st.markdown("""
     <div class="footer">
-        <p><strong>🌾 AGRIBOT - Smart Agricultural Advisory System</strong></p>
-        <p>Powered by AI & Real-time Agricultural Data | Multilingual Support | 24/7 Assistance</p>
-        <p style="font-size: 0.9rem; margin-top: 1rem;">Helping farmers make data-driven decisions for better yields and sustainable farming</p>
+        <p><strong>🌾 AGRIBOT</strong></p>
+        <p>AI-Powered Agricultural Intelligence Platform</p>
+        <p style="font-size: 0.95rem; margin-top: 1.5rem; opacity: 0.8;">
+            🌍 Multilingual Support | 📊 Real-Time Data | 🤖 Advanced AI | 🔒 Secure & Private
+        </p>
+        <p style="font-size: 0.9rem; margin-top: 1rem; opacity: 0.7;">
+            Empowering farmers with cutting-edge technology for sustainable and profitable agriculture
+        </p>
     </div>
     """, unsafe_allow_html=True)
 
